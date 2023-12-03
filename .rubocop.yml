@@ -1,0 +1,36 @@
+require:
+  - rubocop-rails
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "bin/**/*"
+    - "config/**/*"
+    - "db/**/*"
+    - "config.ru"
+    - "Gemfile"
+    - "Rakefile"
+
+Metrics:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 150
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/PerlBackrefs:
+  Enabled: false
+
+Rails/InverseOf:
+  Enabled: false
+
+Rails/OutputSafety:
+  Enabled: false

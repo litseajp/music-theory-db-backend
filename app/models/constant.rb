@@ -1,5 +1,5 @@
 module Constant
   def self.table_name_prefix
-    "constant_"
+    'constant_'
   end
 end

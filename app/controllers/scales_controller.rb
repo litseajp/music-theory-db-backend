@@ -16,7 +16,7 @@ class ScalesController < ApplicationController
   def show
     tonic = params[:tonic]
 
-    scale = Constant::Scale.includes(scale_tones: %i[accidental interval tone_type]).find_by(path: params[:scale].to_s)
+    scale = Constant::Scale.includes(scale_tones: %i[interval tone_type]).find_by(path: params[:scale].to_s)
 
     notes = Constant::ScaleTone.generate_scale_notes(scale.scale_tones, tonic, scale.scale_category_id, scale.path)
     tones = scale.scale_tones.map.with_index { |tone, idx| generate_tone_hash(tone, notes[idx]) }

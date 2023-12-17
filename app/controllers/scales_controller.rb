@@ -16,10 +16,11 @@ class ScalesController < ApplicationController
   def show
     tonic = params[:tonic]
 
-    scale = Constant::Scale.includes(scale_tones: %i[interval tone_type]).find_by(path: params[:scale].to_s)
+    scale = Constant::Scale.find_by(path: params[:scale].to_s)
+    mid_records = Constant::MidScaleInterval.where(scale_id: scale.id).includes(:interval, :tone_type)
 
-    notes = Constant::ScaleTone.generate_scale_notes(scale.scale_tones, tonic, scale.scale_category_id, scale.path)
-    tones = scale.scale_tones.map.with_index { |tone, idx| generate_tone_hash(tone, notes[idx]) }
+    notes = Constant::MidScaleInterval.generate_scale_notes(mid_records.map(&:interval), tonic)
+    tones = mid_records.map.with_index { |mid_record, idx| generate_tone_hash(mid_record, notes[idx]) }
 
     scale_info = {
       'name' => format_note(tonic) + format_accidental(scale.name),
@@ -63,11 +64,11 @@ class ScalesController < ApplicationController
     format_accidental(edited_description)
   end
 
-  def generate_tone_hash(tone, note)
+  def generate_tone_hash(mid_record, note)
     {
-      'interval' => tone.interval.name,
+      'interval' => mid_record.interval.name,
       'note' => note,
-      'tone_type' => tone.tone_type.name
+      'tone_type' => mid_record.tone_type.name
     }
   end
 

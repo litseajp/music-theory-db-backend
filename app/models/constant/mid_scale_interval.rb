@@ -1,8 +1,8 @@
-class Constant::ScaleTone < ApplicationRecord
+class Constant::MidScaleInterval < ApplicationRecord
   belongs_to :interval
   belongs_to :tone_type
 
-  def self.generate_scale_notes(tones, tonic, scale_category_id, path)
+  def self.generate_scale_notes(intervals, tonic)
     ref_notes = if %w[c csharp d dsharp e fsharp g gsharp a asharp b].include?(tonic)
                   CHROMATIC_NOTES_SHARP.slice(CHROMATIC_NOTES_SHARP.index(tonic)..-1) + CHROMATIC_NOTES_SHARP.slice(0, CHROMATIC_NOTES_SHARP.index(tonic))
                 elsif %w[dflat eflat f gflat aflat bflat].include?(tonic)
@@ -20,11 +20,11 @@ class Constant::ScaleTone < ApplicationRecord
     ref_alphabets = %w[c d e f g a b]
     ref_alphabets = ref_alphabets.slice(ref_alphabets.index(tonic[0])..-1) + ref_alphabets.slice(0, ref_alphabets.index(tonic[0]))
 
-    notes = tones.map do |tone|
-      if tone.alphabet_distance.present?
-        adjust_alphabet(ref_notes[tone.semitone_distance], ref_alphabets[tone.alphabet_distance])
+    notes = intervals.map do |interval|
+      if interval.alphabet_distance.present?
+        adjust_alphabet(ref_notes[interval.semitone_distance], ref_alphabets[interval.alphabet_distance])
       else
-        ref_notes[tone.semitone_distance]
+        ref_notes[interval.semitone_distance]
       end
     end
   end

@@ -19,7 +19,7 @@ class ScalesController < ApplicationController
     scale = Constant::Scale.find_by(path: params[:scale].to_s)
     mid_records = Constant::MidScaleInterval.where(scale_id: scale.id).includes(:interval, :tone_type)
 
-    notes = Constant::MidScaleInterval.generate_scale_notes(mid_records.map(&:interval), tonic)
+    notes = Constant::Interval.generate_relative_notes(mid_records.map(&:interval), tonic)
     tones = mid_records.map.with_index { |mid_record, idx| generate_tone_hash(mid_record, notes[idx]) }
 
     scale_info = {
@@ -70,10 +70,6 @@ class ScalesController < ApplicationController
       'note' => note,
       'tone_type' => mid_record.tone_type.name
     }
-  end
-
-  def format_note(note)
-    note.length == 1 ? note.upcase : note.slice(0).upcase + SYMBOLS[note.slice(1..-1).to_sym]
   end
 
   def edit_scale_info_description(description, tones)

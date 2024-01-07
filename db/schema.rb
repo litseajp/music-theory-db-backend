@@ -10,24 +10,56 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_05_143136) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_18_141804) do
+  create_table "constant_chord_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  create_table "constant_chord_positions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "chord_id"
+    t.string "root", null: false
+    t.integer "str1", null: false
+    t.integer "str2", null: false
+    t.integer "str3", null: false
+    t.integer "str4", null: false
+    t.integer "str5", null: false
+    t.integer "str6", null: false
+    t.index ["chord_id"], name: "index_constant_chord_positions_on_chord_id"
+  end
+
+  create_table "constant_chords", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "chord_category_id"
+    t.string "path", null: false
+    t.string "quality", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.index ["chord_category_id"], name: "index_constant_chords_on_chord_category_id"
+  end
+
   create_table "constant_intervals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
+    t.integer "semitone_distance", null: false
+    t.integer "alphabet_distance", null: false
+  end
+
+  create_table "constant_mid_chord_intervals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "chord_id"
+    t.bigint "interval_id"
+    t.index ["chord_id"], name: "index_constant_mid_chord_intervals_on_chord_id"
+    t.index ["interval_id"], name: "index_constant_mid_chord_intervals_on_interval_id"
+  end
+
+  create_table "constant_mid_scale_intervals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "scale_id"
+    t.bigint "interval_id"
+    t.bigint "tone_type_id"
+    t.index ["interval_id"], name: "index_constant_mid_scale_intervals_on_interval_id"
+    t.index ["scale_id"], name: "index_constant_mid_scale_intervals_on_scale_id"
+    t.index ["tone_type_id"], name: "index_constant_mid_scale_intervals_on_tone_type_id"
   end
 
   create_table "constant_scale_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
-  end
-
-  create_table "constant_scale_tones", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "scale_id"
-    t.integer "semitone_distance", null: false
-    t.integer "alphabet_distance"
-    t.bigint "interval_id"
-    t.bigint "tone_type_id"
-    t.index ["interval_id"], name: "index_constant_scale_tones_on_interval_id"
-    t.index ["scale_id"], name: "index_constant_scale_tones_on_scale_id"
-    t.index ["tone_type_id"], name: "index_constant_scale_tones_on_tone_type_id"
   end
 
   create_table "constant_scales", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -42,8 +74,12 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_05_143136) do
     t.string "name", null: false
   end
 
-  add_foreign_key "constant_scale_tones", "constant_intervals", column: "interval_id"
-  add_foreign_key "constant_scale_tones", "constant_scales", column: "scale_id"
-  add_foreign_key "constant_scale_tones", "constant_tone_types", column: "tone_type_id"
+  add_foreign_key "constant_chord_positions", "constant_chords", column: "chord_id"
+  add_foreign_key "constant_chords", "constant_chord_categories", column: "chord_category_id"
+  add_foreign_key "constant_mid_chord_intervals", "constant_chords", column: "chord_id"
+  add_foreign_key "constant_mid_chord_intervals", "constant_intervals", column: "interval_id"
+  add_foreign_key "constant_mid_scale_intervals", "constant_intervals", column: "interval_id"
+  add_foreign_key "constant_mid_scale_intervals", "constant_scales", column: "scale_id"
+  add_foreign_key "constant_mid_scale_intervals", "constant_tone_types", column: "tone_type_id"
   add_foreign_key "constant_scales", "constant_scale_categories", column: "scale_category_id"
 end
